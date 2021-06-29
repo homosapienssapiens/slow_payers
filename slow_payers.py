@@ -9,17 +9,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Función de aprendizaje
+# Learning function
 def learn(X, wh, wo, a = 0.5, alpha = 0.5, E = 0.001, L = 6):
     Y = np.random.random((len(X), 1))
     while True:
         for i in range(L):
-            #Forward**********************************************************************
+            #Forward**********************************************************
             neth = wh @ X[i]
             yh = 1/(1+np.e**(-a*neth))
             neto = wo @ yh
             Y[i] = 1/(1+np.e**(-a*neto))
-            #Backward*********************************************************************
+            #Backward*********************************************************
             deltao = (D[i] - Y[i]) * Y[i] * (1 - Y[i])
             deltah = yh * (1 - yh) * (np.transpose(wo) @ deltao)
             wo += np.transpose(np.atleast_2d(alpha * deltao)) @ np.atleast_2d(yh)
@@ -28,68 +28,74 @@ def learn(X, wh, wo, a = 0.5, alpha = 0.5, E = 0.001, L = 6):
         if np.linalg.norm(deltao) <= E:
             return wh, wo
         
-# Función de funcionamiento       
+# Function function     
 def funct(X, wh, wo, a = 0.5, L = 6):
     Y = np.random.random((len(X), 1))
     for i in range(len(X)):    
-        #Forward**********************************************************************
+        #Forward**************************************************************
         neth = wh @ X[i]
         yh = 1/(1+np.e**(-a*neth))
         neto = wo @ yh
         Y[i] = 1/(1+np.e**(-a*neto))
     return Y
 
+data = pd.read_excel('users.xlsx')
 
-#Leemos el dataframe y generamos nuestra x y nuestra d
-data = pd.read_excel('tarea7.xlsx')
+# Normalization***************************************************************
+# I was asked to use these 3 variables for the prediction:
+    # Quantity: The total quantity of the loan.
+    # Labor seniority: The time the client has worked in their current job (in months)
+    # Salary ratio: The percentage of the Monthly income vs the monthly loan payment.
 
-# Normalización***************************************************************
+# We need to normalize the variables so we can use them for prediction. 
+# Quantity
+data['Quantity norm'] = (data['Quantity'] - min(data['Quantity'])) / (max(data['Quantity']) - min(data['Quantity']))
+# Labor seniority
+data['Labor seniority norm'] = (data['Labor seniority'] - min(data['Labor seniority'])) / (max(data['Labor seniority']) - min(data['Labor seniority']))
+# Salary ratio
+data['Salary ratio norm'] = data['Monthly payment']/data['Monthly income']
 
-# Monto
-data['Monto normalizado'] = (data['Monto'] - min(data['Monto'])) / (max(data['Monto']) - min(data['Monto']))
-# Ingreso Mensual
-data["Antigüedad laboral normalizada"] = (data['Antigüedad laboral (meses)'] - min(data['Antigüedad laboral (meses)'])) / (max(data['Antigüedad laboral (meses)']) - min(data['Antigüedad laboral (meses)']))
-# Carga salarial
-data['Carga salarial normalizada'] = data['Mensualidad']/data['Ingreso mensual']
+# Slow pay variable substitution (Si(YES)/NO(NO) for  1/0)********************
 
-# Reemplazo de la variable 'Mora' a 1 y 0*************************************
+data['Slow pay'] = data['Slow pay'].replace('SI', 1)
+data['Slow pay'] = data['Slow pay'].replace('NO', 0)
 
-data['Mora'] = data['Mora'].replace('SI', 1)
-data['Mora'] = data['Mora'].replace('NO', 0)
+# DF preparedness for training************************************************
 
-# Preparacion del dataset para el training************************************
-
-# Filtramos las variables que necesitamos.
+# Filtering of the variables needed.
 index_list = np.random.choice(data.index, 700, replace=False)
-# Tomamos 700 filas al azar para ser entrenadas.
+# Data_train is a sample of 700 randomly selected rows of the original DF.
 data_train = data.iloc[index_list, :]
-# Tomamos las 300 restantes para hacer pruebas.
+# Data_test is the remaining 300 rows. We will use this DF for further testing
+# of the effectiveness of the training.
 data_test = data.drop(index_list)
 X = data_train.iloc[:, [8, 9, 10]].to_numpy()
-D = data_train['Mora'].to_numpy()
+D = data_train['Slow pay'].to_numpy()
 
-# Aprendizaje*****************************************************************
+# Deep learning***************************************************************
 
-# Inicializamos los pesos con valores aleatorios
+# Random generation of weights. Because of the randomness of the initial weights
+# the final prediction results can vary. 
 wh = np.random.random((6, 3))
 wo = np.random.random((1, 6))
-# Corremos el aprendizaje
+# Learning
 wh, wo = learn(X, wh, wo)
 
-# Prueba *********************************************************************
+# Testing*********************************************************************
 X = data_test.iloc[:, [8, 9, 10]].to_numpy()
 
-# Corremos el funcionamiento y lo añadimos a data_test.
+# Funtion running and adding of the predictions to data_test.
 data_test['Y'] = funct(X, wh, wo)
 
-#Hacemos una nueva columna con un booleano de aprobación del test.
-data_test.loc[(data_test['Mora'] == 1) & (data_test['Y'] >= 0.5), 'Resultado'] = True 
-data_test.loc[(data_test['Mora'] == 0) & (data_test['Y'] <= 0.5), 'Resultado'] = True 
-data_test.loc[(data_test['Mora'] == 1) & (data_test['Y'] < 0.5), 'Resultado'] = False 
-data_test.loc[(data_test['Mora'] == 0) & (data_test['Y'] > 0.5), 'Resultado'] = True
+# New column for the accuracy of the predictions. 
+# If the prediction is correct 'True', if it is wrong 'False'.
+data_test.loc[(data_test['Slow pay'] == 1) & (data_test['Y'] >= 0.5), 'Result'] = True 
+data_test.loc[(data_test['Slow pay'] == 0) & (data_test['Y'] <= 0.5), 'Result'] = True 
+data_test.loc[(data_test['Slow pay'] == 1) & (data_test['Y'] < 0.5), 'Result'] = False 
+data_test.loc[(data_test['Slow pay'] == 0) & (data_test['Y'] > 0.5), 'Result'] = True
 
-resultado = data_test['Resultado'].value_counts(normalize=True) * 100
-
-plt.pie(resultado, labels = ['Right', 'Wrong'], shadow = True)
+# Pie chart of the results.
+Result = data_test['Result'].value_counts(normalize=True) * 100
+plt.pie(Result, labels = ['Right', 'Wrong'], shadow = True)
 
 
