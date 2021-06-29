@@ -1,12 +1,12 @@
 # Slow Payers
 
 ## Introduction
-In this project I trained a perceptron neural network to predict if a new client will be a slow payer. This example can be a good starting point for data scientist who are begining to learn percetron, the most common neural network algorithm.
+In this project I trained a perceptron neural network to predict if a new client will be a slow payer. This example can be a good starting point for data scientist who are begining to learn perceptron, the most common neural network algorithm.
 
 In this reposirtory you may find:
 
 * README.md: This file.
-* slow_payers.py: Python script with the normalization, segregation, traaining and testing processes.
+* slow_payers.py: Python script with the normalization, segregation, training and testing processes.
 * users.xlsx: A data set with 1000 rows which each one represents a client. There are more columns than the used by me in this prediction so maybe you can use othe columns to obtain different results.
 
 For this prediction I used 3 input variables:
