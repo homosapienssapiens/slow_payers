@@ -5,7 +5,7 @@ In this project I trained a perceptron neural network to predict if a new client
 * Labor seniority: The time the client has worked in their current job (in months)
 * Salary ratio: The percentage of the Monthly income vs the monthly loan payment.
 
-![Perceptron neural network](Neural Network.jpeg)
+![Perceptron neural network](/images/Neural_Network.jpeg)
 
 The output of the nn is only one boolean for if the person will be a slow payer or not: if 0 no, if 1 yes.
 
