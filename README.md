@@ -24,7 +24,7 @@ The output of the nn is only one boolean for if the person will be a slow payer 
 
 The nn is using 6 hidden neurons for the pattern finding.
 
-I used a random sample of 700 clients to train the nn. The other 300 clients were used to test the accuracy of the trained nn prediction. Since my initial weights are randomized, the final results may vary. You can spect 80% - 95% accuracy.
+I used a random sample of 700 clients to train the nn. The other 300 clients were used to test the accuracy of the trained nn prediction. Since my initial weights are randomized, the final results may vary. You can expect 80% - 95% accuracy.
 
 My default patterns are:
 * Alpha = 0.05
