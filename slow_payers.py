@@ -92,7 +92,7 @@ data_test['Y'] = funct(X, wh, wo)
 data_test.loc[(data_test['Slow pay'] == 1) & (data_test['Y'] >= 0.5), 'Result'] = True 
 data_test.loc[(data_test['Slow pay'] == 0) & (data_test['Y'] <= 0.5), 'Result'] = True 
 data_test.loc[(data_test['Slow pay'] == 1) & (data_test['Y'] < 0.5), 'Result'] = False 
-data_test.loc[(data_test['Slow pay'] == 0) & (data_test['Y'] > 0.5), 'Result'] = True
+data_test.loc[(data_test['Slow pay'] == 0) & (data_test['Y'] > 0.5), 'Result'] = False
 
 # Pie chart of the results.
 Result = data_test['Result'].value_counts(normalize=True) * 100
