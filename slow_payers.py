@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
 # Learning function
 def learn(X, wh, wo, a = 0.5, alpha = 0.5, E = 0.001, L = 6):
     Y = np.random.random((len(X), 1))
@@ -45,7 +46,7 @@ data = pd.read_excel('users.xlsx')
 # I was asked to use these 3 variables for the prediction:
     # Quantity: The total quantity of the loan.
     # Labor seniority: The time the client has worked in their current job (in months)
-    # Salary ratio: The percentage of the Monthly income vs the monthly loan payment.
+    # Salary ratio: The percentage of the Monthly income. vs the monthly loan payment.
 
 # We need to normalize the variables so we can use them for prediction. 
 # Quantity
